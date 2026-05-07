@@ -4,7 +4,7 @@
 let entries = JSON.parse(localStorage.getItem("ts_entries") || "[]");
 let companies = JSON.parse(
   localStorage.getItem("ts_companies") ||
-    '["Acme Corp","Freelance Client","Internal"]',
+    '["Brembo","Proto-D","Netcron"."Paragoan"]',
 );
 let timerInterval = null;
 let timerStart = null;
