@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Office Timesheet</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"
+    />
+    <link rel="stylesheet" href="./timesheet.css">
+   
+  </head>
+
+  
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <div class="header-left">
+          <h1><i class="ti ti-clock"></i> Timesheet</h1>
+          <p id="date-display"></p>
+        </div>
+        <div class="live-clock" id="live-clock"></div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-label">Today</div>
+          <div class="stat-val green" id="stat-today">0h 0m</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">This Week</div>
+          <div class="stat-val blue" id="stat-week">0h 0m</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">This Month</div>
+          <div class="stat-val" id="stat-month">0h 0m</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Total Entries</div>
+          <div class="stat-val amber" id="stat-entries">0</div>
+        </div>
+      </div>
+
+      <!-- Active Timer Banner -->
+      <div class="active-timer" id="active-timer">
+        <div class="timer-info">
+          <div>
+            <div class="timer-label">
+              <i class="ti ti-player-play"></i> Timer Running
+            </div>
+            <div class="timer-sub" id="timer-desc"></div>
+          </div>
+          <div class="timer-elapsed" id="timer-elapsed">00:00:00</div>
+          <button class="danger" onclick="stopTimer()">
+            <i class="ti ti-player-stop"></i> Stop
+          </button>
+        </div>
+      </div>
+
+      <!-- Log Time Panel -->
+      <div class="panel">
+        <div class="panel-title"><i class="ti ti-plus"></i> Log Time</div>
+
+        <div class="form-row">
+          <div>
+            <label>Company / Client</label>
+            <select id="inp-company">
+              <option value="">Select company...</option>
+            </select>
+          </div>
+          <div>
+            <label>Project / Task</label>
+            <input
+              type="text"
+              id="inp-project"
+              placeholder="e.g. UI redesign, Bug fix..."
+            />
+          </div>
+        </div>
+
+        <div class="form-row three">
+          <div>
+            <label>Date</label>
+            <input type="date" id="inp-date" />
+          </div>
+          <div>
+            <label>Start Time</label>
+            <input type="time" id="inp-start" />
+          </div>
+          <div>
+            <label>End Time</label>
+            <input type="time" id="inp-end" />
+          </div>
+        </div>
+
+        <div>
+          <label>Notes (optional)</label>
+          <textarea
+            id="inp-notes"
+            placeholder="Any notes about this session..."
+          ></textarea>
+        </div>
+
+        <div class="btn-row">
+          <button class="primary" onclick="addEntry()">
+            <i class="ti ti-check"></i> Add Entry
+          </button>
+          <button class="success" onclick="startTimer()" id="btn-start-timer">
+            <i class="ti ti-player-play"></i> Start Timer
+          </button>
+          <button onclick="openManageCompanies()">
+            <i class="ti ti-building"></i> Manage Companies
+          </button>
+        </div>
+      </div>
+
+      <!-- Entries / Companies Panel -->
+      <div class="panel">
+        <div class="tabs">
+          <div class="tab active" onclick="switchTab('entries', this)">
+            All Entries
+          </div>
+          <div class="tab" onclick="switchTab('companies', this)">
+            By Company
+          </div>
+        </div>
+
+        <!-- All Entries -->
+        <div id="tab-entries">
+          <div class="filter-row">
+            <select id="filter-company" onchange="renderEntries()">
+              <option value="">All Companies</option>
+            </select>
+            <input
+              type="date"
+              id="filter-from"
+              onchange="renderEntries()"
+              title="From date"
+            />
+            <input
+              type="date"
+              id="filter-to"
+              onchange="renderEntries()"
+              title="To date"
+            />
+            <button onclick="clearFilters()">
+              <i class="ti ti-x"></i> Clear
+            </button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 18%">Company</th>
+                  <th style="width: 18%">Project</th>
+                  <th style="width: 11%">Date</th>
+                  <th style="width: 10%">Start</th>
+                  <th style="width: 10%">End</th>
+                  <th style="width: 12%">Duration</th>
+                  <th style="width: 17%">Notes</th>
+                  <th style="width: 4%"></th>
+                </tr>
+              </thead>
+              <tbody id="entries-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- By Company -->
+        <div id="tab-companies" style="display: none">
+          <div class="filter-row">
+            <select id="filter-period" onchange="renderCompanies()">
+              <option value="all">All Time</option>
+              <option value="today">Today</option>
+              <option value="week">This Week</option>
+              <option value="month">This Month</option>
+            </select>
+          </div>
+          <div id="company-chart" style="margin-bottom: 1.5rem"></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 30%">Company</th>
+                  <th style="width: 22%">Total Hours</th>
+                  <th style="width: 18%">Sessions</th>
+                  <th style="width: 30%">Last Worked</th>
+                </tr>
+              </thead>
+              <tbody id="company-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /container -->
+
+    <!-- Manage Companies Modal -->
+    <div class="modal-bg" id="modal-bg" onclick="handleModalBgClick(event)">
+      <div class="modal">
+        <div class="modal-header">
+          <span><i class="ti ti-building"></i> Manage Companies</span>
+          <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        <div style="display: flex; gap: 8px; margin-bottom: 12px">
+          <input
+            type="text"
+            id="new-company-inp"
+            placeholder="Company name..."
+            style="flex: 1"
+            onkeydown="if (event.key === 'Enter') addCompany();"
+          />
+          <button class="primary" onclick="addCompany()">
+            <i class="ti ti-plus"></i> Add
+          </button>
+        </div>
+        <div id="company-list-modal"></div>
+      </div>
+    </div>
+     <script src="./timesheet.js"></script>
+  </body>
+</html>
